@@ -3,6 +3,7 @@
 ## ¿Cómo me bajo esta plantilla?
 
 a) Como git `git clone https://github.com/UNPSJB/sd-tp2.git`
+
 b) Bajando el [zip](https://github.com/UNPSJB/sd-tp2/archive/master.zip)
 
 
