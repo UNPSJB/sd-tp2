@@ -1,4 +1,4 @@
-# Kico Off Flask
+# Kick Off Flask
 
 ## ¿Cómo me bajo esta plantilla?
 
