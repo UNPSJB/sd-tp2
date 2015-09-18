@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+
+{% block style %}
+    <style type="text/css">
+        table {
+            border: 1px solid black;
+            width: 100%;
+            padding: 2px;
+        }
+
+    </style>
+{% endblock style %}
+{% block content %}
+
+<a href="/" id="agregar_fila">Agregar fila</a>
+<table id="tabla">
+
+</table>
+{% endblock content %}
+
+
+{% block scripts %}
+    <script type="text/javascript">
+    (function ($) {
+
+        var tabla = $('#tabla');
+
+        $('#agregar_fila').on('click', function (){
+            var cosa = prompt("Dame algo para poner en la tabla");
+            try {
+                if (cosa != null) {
+                    var tr = $('<tr>');
+                    for (var i = 0; i < 3; i++) {
+                        tr.append('<td>'+cosa+'</td>');
+                    }
+                    tabla.append(tr);
+                }
+            } catch(error) {
+                console.error(error);
+            }
+
+            return false;
+        });
+    })(window.jQuery);
+</script>
+{% endblock scripts %}

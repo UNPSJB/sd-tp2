@@ -1,4 +1,10 @@
+import sys
 from flask import Flask, render_template, request
+import gevent
+from gevent.pywsgi import WSGIServer
+from gevent import monkey
+monkey.patch_all()
+
 app = Flask(__name__)
 from webbrowser import open_new_tab
 from thread import start_new_thread
@@ -13,6 +19,23 @@ def index():
         variable="Una variable",
     )
 
+@app.route('/js')
+def js():
+    return render_template("js.html")
+
+
+def event():
+    while True:
+        yield 'data: ' + json.dumps(random.rand(1000).tolist()) + '\n\n'
+        gevent.sleep(0.2)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/stream/', methods=['GET', 'POST'])
+def stream():
+    return Response(event(), mimetype="text/event-stream")
 
 @app.route('/agregar_usuario/', methods=["GET", "POST"])
 def agregar_usuario():
@@ -33,4 +56,5 @@ def main():
     app.run(debug=True)
 
 if __name__ == '__main__':
+    print sys.version
     main()
