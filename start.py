@@ -1,5 +1,7 @@
 import sys
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
+import werkzeug.serving
+
 import gevent
 from gevent.pywsgi import WSGIServer
 from gevent import monkey
@@ -9,6 +11,7 @@ app = Flask(__name__)
 from webbrowser import open_new_tab
 from thread import start_new_thread
 from functools import partial
+from datetime import datetime
 
 
 @app.route('/')
@@ -24,18 +27,6 @@ def js():
     return render_template("js.html")
 
 
-def event():
-    while True:
-        yield 'data: ' + json.dumps(random.rand(1000).tolist()) + '\n\n'
-        gevent.sleep(0.2)
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/stream/', methods=['GET', 'POST'])
-def stream():
-    return Response(event(), mimetype="text/event-stream")
 
 @app.route('/agregar_usuario/', methods=["GET", "POST"])
 def agregar_usuario():
@@ -45,15 +36,29 @@ def agregar_usuario():
 
     return render_template('agregar_usuario.html')
 
-def abrir(url):
-    from time import sleep
-    sleep(1)
-    print "Vamos a abrir"
-    open_new_tab(url)
+@app.route('/sse')
+def sse():
+    return render_template('sse.html')
 
+def event():
+    while True:
+        msg = 'data: %s \n\n' % datetime.now()
+        yield msg
+        gevent.sleep(0.2)
+
+
+@app.route('/stream/', methods=['GET', 'POST'])
+def stream():
+    return Response(event(), mimetype="text/event-stream")
+
+
+@werkzeug.serving.run_with_reloader
 def main():
-    start_new_thread(abrir, ('http://localhost:5000/', ))
-    app.run(debug=True)
+    app.debug = True
+
+    ws = WSGIServer(('', 5000), app)
+    ws.serve_forever()
+
 
 if __name__ == '__main__':
     print sys.version
