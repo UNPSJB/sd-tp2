@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Recibe envetos SSE</h1>
+    <ul id="lista">
+
+    </ul>
+{% endblock content %}
+
+{% block scripts %}
+    <script type="text/javascript">
+    (function ($){
+        var evtSource = new EventSource("/stream");
+
+        evtSource.onmessage = function(e) {
+          var newListItem = $("<li>");
+
+          newListItem.html(e.data);
+          $('#lista').append(newListItem);
+        }
+    })(window.jQuery);
+
+
+    </script>
+
+{% endblock scripts %}
